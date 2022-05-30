@@ -1,6 +1,7 @@
-package cl.uchile.dcc.citricliquid.model;
+package cl.uchile.dcc.citricliquid.model.units;
 
 import org.junit.jupiter.api.Assertions;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
@@ -14,30 +15,71 @@ import java.util.Random;
  * @version 1.0.6-rc.1
  * @since 1.0
  */
-public class PlayerTest {
+public class AbstractUnitTest {
   private final static String PLAYER_NAME = "Suguri";
   private Player suguri;
+  private final static String Wild_Name = "Wolf";
+  private WildUnit wolf;
+  private final static String Boss_Name = "Shrek";
+  private BossUnit shrek;
 
   @BeforeEach
   public void setUp() {
     suguri = new Player(PLAYER_NAME, 4, 1, -1, 2);
+    wolf = new WildUnit(Wild_Name, 2, 2, -3, 10);
+    shrek = new BossUnit(Boss_Name, 100, 5, -10, 1);
   }
 
   @Test
   public void constructorTest() {
-    final var expectedSuguri = new Player(PLAYER_NAME, 4, 1, -1, 2);
-    Assertions.assertEquals(expectedSuguri, suguri);
+     assertEquals(PLAYER_NAME, suguri.getName());
+     assertEquals(4, suguri.getCurrentHp());
+     assertEquals(4, suguri.getMaxHp());
+     assertEquals(1, suguri.getAtk());
+     assertEquals(-1, suguri.getDef());
+     assertEquals(2, suguri.getEvd());
+
+     assertEquals(0, suguri.getStars());
+     assertEquals(1, suguri.getNormaLevel());
   }
 
   @Test
   public void testEquals() {
     final var o = new Object();
+
     Assertions.assertNotEquals(suguri, o);
     Assertions.assertEquals(suguri, suguri);
     final var expectedSuguri = new Player(PLAYER_NAME, 4, 1, -1, 2);
     Assertions.assertEquals(expectedSuguri, suguri);
+    final var messi = new Player("Messi", 100, 90, 1, 99);
+    assertNotEquals(messi, suguri);
+
+    assertNotEquals(wolf, o);
+    assertEquals(wolf, wolf);
+    final var expectedWolf = new WildUnit(Wild_Name, 2, 2, -3, 10);
+    assertEquals(wolf, expectedWolf);
+
+    assertNotEquals(shrek, o);
+    assertEquals(shrek, shrek);
+    final var expectedShrek = new BossUnit(Boss_Name, 100, 5, -10, 1);
+    assertEquals(shrek, expectedShrek);
   }
 
+  @Test
+  public void starsTest(){
+    assertEquals(0, shrek.getStars());
+
+    shrek.increaseStarsBy(3);
+    assertEquals(3, shrek.getStars());
+
+    shrek.reduceStarsBy(2);
+    assertEquals(1, shrek.getStars());
+
+    shrek.reduceStarsBy(10);
+    assertEquals(0, shrek.getStars());
+
+
+  }
   @Test
   public void hitPointsTest() {
     Assertions.assertEquals(suguri.getMaxHp(), suguri.getCurrentHp());
@@ -49,11 +91,6 @@ public class PlayerTest {
     Assertions.assertEquals(4, suguri.getCurrentHp());
   }
 
-  @Test
-  public void normaClearTest() {
-    suguri.normaClear();
-    Assertions.assertEquals(2, suguri.getNormaLevel());
-  }
 
   @Test
   public void copyTest() {
@@ -63,6 +100,20 @@ public class PlayerTest {
     Assertions.assertEquals(expectedSuguri, actualSuguri);
     // Checks that the copied player doesn't reference the same object
     Assertions.assertNotSame(expectedSuguri, actualSuguri);
+
+    final var expectedWolf = new WildUnit(Wild_Name, 2, 2, -3, 10);
+    final var actualWolf = wolf.copy();
+    // Checks that the copied player have the same parameters as the original
+    Assertions.assertEquals(expectedWolf, actualWolf);
+    // Checks that the copied player doesn't reference the same object
+    Assertions.assertNotSame(expectedWolf, actualWolf);
+
+    final var expectedShrek = new BossUnit(Boss_Name, 100, 5, -10, 1);
+    final var actualShrek = shrek.copy();
+    // Checks that the copied player have the same parameters as the original
+    Assertions.assertEquals(expectedShrek, actualShrek);
+    // Checks that the copied player doesn't reference the same object
+    Assertions.assertNotSame(expectedShrek, actualShrek);
   }
 
   // region : consistency tests
@@ -80,18 +131,6 @@ public class PlayerTest {
                           + testSeed);
   }
 
-  @RepeatedTest(100)
-  public void normaClearConsistencyTest() {
-    final long testSeed = new Random().nextLong();
-    // We're gonna test for 0 to 5 norma clears
-    final int iterations = Math.abs(new Random(testSeed).nextInt(6));
-    final int expectedNorma = suguri.getNormaLevel() + iterations;
-    for (int it = 0; it < iterations; it++) {
-      suguri.normaClear();
-    }
-    Assertions.assertEquals(expectedNorma, suguri.getNormaLevel(),
-                            "Test failed with random seed: " + testSeed);
-  }
 
   @RepeatedTest(100)
   public void rollConsistencyTest() {
