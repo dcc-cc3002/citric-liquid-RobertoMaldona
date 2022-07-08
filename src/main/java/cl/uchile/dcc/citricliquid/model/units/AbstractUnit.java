@@ -61,6 +61,7 @@ public abstract class AbstractUnit implements IUnit {
         return evd;
     }
 
+
     /**
      * Returns the current hit points of the character.
      */
@@ -99,6 +100,18 @@ public abstract class AbstractUnit implements IUnit {
      */
     public int getStars() {
         return stars;
+    }
+
+    /**
+     * method that advice if the Unit is KO
+     */
+    public boolean isK_O(){
+        if(getCurrentHp()==0){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 
     /**
