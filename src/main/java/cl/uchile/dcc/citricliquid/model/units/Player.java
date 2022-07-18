@@ -1,6 +1,5 @@
 package cl.uchile.dcc.citricliquid.model.units;
 
-import cl.uchile.dcc.citricliquid.model.board.HomePanel;
 import cl.uchile.dcc.citricliquid.model.board.IPanel;
 import cl.uchile.dcc.citricliquid.model.norma.INormaGoal;
 import cl.uchile.dcc.citricliquid.model.norma.StarNorma;
@@ -16,7 +15,7 @@ import java.beans.PropertyChangeSupport;
  * @version 1.1.222804
  * @since 1.0
  */
-public class Player extends AbstractUnit implements IUnit {
+public class Player extends AbstractUnit {
   private int normaLevel;
   private INormaGoal normaGoal;
   private int victories;
@@ -139,6 +138,13 @@ public class Player extends AbstractUnit implements IUnit {
   }
 
   /**
+   * Increases the Player's Field victories
+   */
+  public void increaseVictoriesBy(int amount){
+    setVictories(victories+amount);
+  }
+
+  /**
    * Call to checkMe, norma's method, that decides if the goal selected by the player
    * was achieve or not
    */
@@ -205,5 +211,37 @@ public class Player extends AbstractUnit implements IUnit {
    */
   public void addMoreTanOnePathHandler(PropertyChangeListener Listener){
     pathToChooseNotification.addPropertyChangeListener(Listener);
+  }
+
+  @Override
+  public void winAgainst(IUnit defeatedUnit){
+    defeatedUnit.defeatedByPlayer(this);
+    defeatedUnit.increaseVictoriesToPlayer(this);
+  }
+
+  @Override
+  public void increaseVictoriesToPlayer(Player winPlayer){
+    winPlayer.increaseVictoriesBy(2);
+  }
+
+  @Override
+  public void defeatedByPlayer(Player winPlayer){
+    int starsToPlayer = ((int) Math.floor(getStars()*0.5));
+    reduceStarsBy(starsToPlayer);
+    winPlayer.increaseStarsBy(starsToPlayer);
+  }
+
+  @Override
+  public void defeatedByBoss(BossUnit bossUnit) {
+    int starsToBoss = ((int) Math.floor(getStars()*0.5));
+    reduceStarsBy(starsToBoss);
+    bossUnit.increaseStarsBy(starsToBoss);
+  }
+
+  @Override
+  public void defeatedByWildUnit(WildUnit wildUnit) {
+    int starsToWildUnit = ((int) Math.floor(getStars()*0.5));
+    reduceStarsBy(starsToWildUnit);
+    wildUnit.increaseStarsBy(starsToWildUnit);
   }
 }

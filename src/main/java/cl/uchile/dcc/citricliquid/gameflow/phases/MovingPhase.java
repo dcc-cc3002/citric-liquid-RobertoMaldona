@@ -4,7 +4,12 @@ public class MovingPhase extends Phase {
 
     @Override
     public void move(){
+        gameController.moveStart();
+    }
 
+    @Override
+    public void keepMoving(){
+        gameController.keepMoving();
     }
 
     @Override

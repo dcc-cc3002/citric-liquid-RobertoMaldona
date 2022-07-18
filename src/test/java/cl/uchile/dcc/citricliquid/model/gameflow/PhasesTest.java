@@ -1,12 +1,15 @@
 package cl.uchile.dcc.citricliquid.model.gameflow;
 
 import cl.uchile.dcc.citricliquid.gameflow.GameController;
+import cl.uchile.dcc.citricliquid.gameflow.phases.*;
 import cl.uchile.dcc.citricliquid.model.board.IPanel;
 import cl.uchile.dcc.citricliquid.model.units.BossUnit;
 import cl.uchile.dcc.citricliquid.model.units.Player;
 import cl.uchile.dcc.citricliquid.model.units.WildUnit;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,7 @@ public class PhasesTest {
 
     private final GameController gameController = new GameController();
     private final Random random = new Random();
+    private long seed;
 
     private final List<Player> playersTest = new ArrayList<>();
     private final List<IPanel> panelsTest = new ArrayList<>();
@@ -50,12 +54,160 @@ public class PhasesTest {
         neutralPnl6= gameController.addNeutralPanel(6);
         neutralPnl7= gameController.addNeutralPanel(7);
         neutralPnl8= gameController.addNeutralPanel(8);
+
+        seed= new Random().nextLong();
     }
 
-    @Test
-    public void startTest(){
-        gameController.
+    @RepeatedTest(24)
+    public void startAndRecoveryTest(){
+        gameController.setNextPanel(homePnl1, neutralPnl1);
+        gameController.setNextPanel(neutralPnl1, neutralPnl2);
+        gameController.setNextPanel(neutralPnl2, neutralPnl3);
+        gameController.setNextPanel(neutralPnl3, neutralPnl4);
+        gameController.setNextPanel(neutralPnl4, neutralPnl5);
+        gameController.setNextPanel(neutralPnl5, neutralPnl6);
+        gameController.StartGame();
+
+        assertSame(gameController.getPhase().getClass(), StartPhase.class);
+        assertEquals(Suguri, gameController.getOwnerTurn());
+
+        gameController.getOwnerTurn().setCurrentHp(0);
+
+        gameController.getOwnerTurn().setSeed(seed);
+        random.setSeed(seed);
+        int dice = random.nextInt(6)+1;
+
+        gameController.turnStart();
+        if(dice >= 7-gameController.getChapter()){
+            assertEquals(Suguri.getMaxHp(), Suguri.getCurrentHp());
+            assertEquals(Suguri, gameController.getOwnerTurn());
+        }else {
+            assertEquals(QP, gameController.getOwnerTurn());
+        }
+        assertSame(gameController.getPhase().getClass(), StartPhase.class);
     }
 
+
+    @RepeatedTest(24)
+    public void movePhaseTest(){
+        gameController.setNextPanel(homePnl1, neutralPnl1);
+        gameController.setNextPanel(neutralPnl1, neutralPnl2);
+        gameController.setNextPanel(neutralPnl2, neutralPnl3);
+        gameController.setNextPanel(neutralPnl3, neutralPnl4);
+        gameController.setNextPanel(neutralPnl4, neutralPnl5);
+        gameController.setNextPanel(neutralPnl5, neutralPnl6);
+        gameController.StartGame();
+
+
+        gameController.getOwnerTurn().setSeed(seed);
+        random.setSeed(seed);
+        int dice = random.nextInt(6)+1;
+
+        gameController.turnStart();
+        if(dice==1){
+            assertEquals(neutralPnl1, Suguri.getActualPanel());
+        }else if(dice==2){
+            assertEquals(neutralPnl2, Suguri.getActualPanel());
+        }else if(dice==3){
+            assertEquals(neutralPnl3, Suguri.getActualPanel());
+        }else if(dice==4){
+            assertEquals(neutralPnl4, Suguri.getActualPanel());
+        }else if(dice==5){
+            assertEquals(neutralPnl5, Suguri.getActualPanel());
+        }else if(dice==6){
+            assertEquals(neutralPnl6, Suguri.getActualPanel());
+        }
+        assertSame(StartPhase.class, gameController.getPhase().getClass());
+    }
+
+    @RepeatedTest(24)
+    public void WaitForHomePhaseTest(){
+        gameController.setNextPanel(neutralPnl1, homePnl1);
+        gameController.setNextPanel(homePnl1, neutralPnl2);
+        gameController.setNextPanel(neutralPnl2, neutralPnl3);
+        gameController.setNextPanel(neutralPnl3, neutralPnl4);
+        gameController.setNextPanel(neutralPnl4, neutralPnl5);
+        gameController.setNextPanel(neutralPnl5, neutralPnl6);
+        gameController.StartGame();
+        gameController.setPlayerPanel(Suguri, neutralPnl1);
+
+        gameController.getOwnerTurn().setSeed(seed);
+        random.setSeed(seed);
+        int dice = random.nextInt(6)+1;
+        gameController.turnStart();
+        if(dice==1){
+            assertEquals(homePnl1, Suguri.getActualPanel());
+        }else {
+            assertSame(WaitForHomePhase.class, gameController.getPhase().getClass());
+            if(random.nextBoolean()){
+                gameController.tryToStayAtHome();
+                assertEquals(homePnl1, Suguri.getActualPanel());
+                assertSame(StartPhase.class, gameController.getPhase().getClass());
+                assertEquals(QP, gameController.getOwnerTurn());
+            }else {
+                gameController.keepMoving();
+                if(dice==2){
+                    assertEquals(neutralPnl2, Suguri.getActualPanel());
+                }else if(dice==3){
+                    assertEquals(neutralPnl3, Suguri.getActualPanel());
+                }else if(dice==4){
+                    assertEquals(neutralPnl4, Suguri.getActualPanel());
+                }else if(dice==5){
+                    assertEquals(neutralPnl5, Suguri.getActualPanel());
+                }else if(dice==6){
+                    assertEquals(neutralPnl6, Suguri.getActualPanel());
+                }
+                assertEquals(QP, gameController.getOwnerTurn());
+                assertSame(StartPhase.class, gameController.getPhase().getClass());
+            }
+        }
+    }
+
+    @RepeatedTest(25)
+    public void waitForPathTest(){
+        gameController.setNextPanel(homePnl1, neutralPnl1);
+        gameController.setNextPanel(neutralPnl1, neutralPnl2);
+        gameController.setNextPanel(neutralPnl1, neutralPnl7);
+        gameController.setNextPanel(neutralPnl2, neutralPnl3);
+        gameController.setNextPanel(neutralPnl3, neutralPnl2);
+        gameController.StartGame();
+
+        /*
+        homePnl1 --> neutralPnl1 --> neutralPnl7
+                          |
+                          |
+                          v
+                     neutralPnl2  <---> neutralPnl3
+         */
+
+        gameController.getOwnerTurn().setSeed(seed);
+        random.setSeed(seed);
+        int dice = random.nextInt(6)+1;
+        gameController.turnStart();
+
+        if(dice==1){
+            assertSame(StartPhase.class, gameController.getPhase().getClass());
+            assertEquals(QP, gameController.getOwnerTurn());
+        }else {
+            assertSame(WaitingForPathPhase.class, gameController.getPhase().getClass());
+            int options = random.nextInt(4);
+            if (options == 0) {
+                gameController.setUpPanel(neutralPnl1, neutralPnl2);
+                gameController.tryToMoveUp();
+            } else if (options == 1) {
+                gameController.setDownPanel(neutralPnl1, neutralPnl2);
+                gameController.tryToMoveDown();
+            } else if (options == 2) {
+                gameController.setLeftPanel(neutralPnl1, neutralPnl2);
+                gameController.tryToMoveLeft();
+            } else {
+                gameController.setRightPanel(neutralPnl1, neutralPnl2);
+                gameController.tryToMoveRight();
+            }
+            assertTrue(Suguri.getActualPanel().equals(neutralPnl2) || Suguri.getActualPanel().equals(neutralPnl3));
+            assertEquals(QP, gameController.getOwnerTurn());
+            assertSame(StartPhase.class, gameController.getPhase().getClass());
+        }
+    }
 
 }

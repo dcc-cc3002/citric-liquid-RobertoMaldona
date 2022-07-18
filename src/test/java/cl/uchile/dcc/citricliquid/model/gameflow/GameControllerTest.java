@@ -236,7 +236,7 @@ public class GameControllerTest {
     }
 
     /**
-     * Test realized a normacheck and norma clear when a player fall on a HomePanel
+     * Test does a normacheck and norma clear when a player lands on a HomePanel
      */
     @Test
     public void onHomePanelTest(){
@@ -272,7 +272,6 @@ public class GameControllerTest {
         gameController.setPhase(new MovingPhase());
 
         gameController.moveStart();
-
         /*
         Nos aseguramos que SuguriController no haya avanzado más allá de su Home Panel.
          */

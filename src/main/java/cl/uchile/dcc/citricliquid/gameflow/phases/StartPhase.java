@@ -8,23 +8,24 @@ import cl.uchile.dcc.citricliquid.gameflow.phases.RecoveryPhase;
 public class StartPhase extends Phase {
 
     @Override
-    public void start() throws InvalidPhaseTransition {
+    public void start() {
         if(gameController.getOwnerTurn().isK_O()){
             toRecoveryPhase();
             gameController.try_recover();
         } else {
+            gameController.starsAtStart();
             toMovingPhase();
             gameController.try_startMove();
         }
     }
 
     @Override
-    public void toChooseCardPhase() throws InvalidPhaseTransition {
+    public void toChooseCardPhase() {
         changePhase(new ChooseCardPhase());
     }
 
     @Override
-    public void toRecoveryPhase() throws InvalidPhaseTransition {
+    public void toRecoveryPhase() {
         changePhase(new RecoveryPhase());
     }
     @Override

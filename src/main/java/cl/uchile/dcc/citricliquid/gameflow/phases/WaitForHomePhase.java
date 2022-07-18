@@ -10,6 +10,11 @@ public class WaitForHomePhase extends Phase {
     public void waitHome() {
 
     }
+    @Override
+    public void stayAtHome(){
+        toEndTurnPhase();
+        gameController.stayAtHome();
+    }
 
     @Override
     public void toEndTurnPhase() {

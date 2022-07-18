@@ -27,6 +27,9 @@ public class GameController {
     private boolean gameOver = false;
     private boolean canOwnerMove = false;
 
+    private IUnit attacker = null;
+    private IUnit victim = null;
+
     private final NormaCheckHandler normaCheckHandler = new NormaCheckHandler(this);
     private final HomePanelHandler homePanelHandler = new HomePanelHandler(this);
     private final FightHandler fightHandler = new FightHandler(this);
@@ -207,6 +210,42 @@ public class GameController {
     }
 
     /**
+     * Method that set that newpanel is up to actual
+     * @param actual actual panel
+     * @param newpanel panel next to actual
+     */
+    public void setUpPanel(@NotNull IPanel actual, IPanel newpanel){
+        actual.setUp(newpanel);
+    }
+
+    /**
+     * Method that set that newpanel is up to actual
+     * @param actual actual panel
+     * @param newpanel panel next to actual
+     */
+    public void setDownPanel(@NotNull IPanel actual, IPanel newpanel){
+        actual.setDown(newpanel);
+    }
+
+    /**
+     * Method that set that newpanel is up to actual
+     * @param actual actual panel
+     * @param newpanel panel next to actual
+     */
+    public void setLeftPanel(@NotNull IPanel actual, IPanel newpanel){
+        actual.setLeft(newpanel);
+    }
+
+    /**
+     * Method that set that newpanel is up to actual
+     * @param actual actual panel
+     * @param newpanel panel next to actual
+     */
+    public void setRightPanel(@NotNull IPanel actual, IPanel newpanel){
+        actual.setRight(newpanel);
+    }
+
+    /**
      * Method that returns a list with all the panels created in the controller
      * @return copy of board, it is all the panels.
      */
@@ -246,7 +285,7 @@ public class GameController {
      * Set nturn, and chapter if it's necessary, when a player ends his turn.
      * Change ownerTurn too, to the next owner of the turn.
      */
-    public void finishTurn(){
+    public void finishTurn() {
         activatePanel();
         if(nturn==4){
             chapter++;
@@ -255,6 +294,7 @@ public class GameController {
             nturn++;
         }
         resetOwnerTurn();
+
     }
 
     /**
@@ -320,7 +360,6 @@ public class GameController {
                 invalidPhaseTransition.printStackTrace();
             }
         }
-
     }
 
     /**
@@ -360,13 +399,175 @@ public class GameController {
         ownerTurn.addMoreTanOnePathHandler(choosePathHandler);
 
         remainingSteps = ownerTurn.roll();
+        keepMoving();
+    }
+
+    /**
+     * Method to execute the action of keep moving if the phase allowed it.
+     */
+    public void tryKeepMoving(){
+        try {
+            phase_actual.toMovingPhase();
+            phase_actual.keepMoving();
+        } catch (InvalidActionException | InvalidPhaseTransition e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Execute the action of keep moving.
+     */
+    public void keepMoving(){
         setCanOwnerMove(true);
         while (remainingSteps>0 && canOwnerMove){
             IPanel nextPanel= getNextPanels(ownerTurn.getActualPanel()).iterator().next();
             remainingSteps--;
             setPlayerPanel(ownerTurn, nextPanel);
         }
-        stopMove();
+        if(canOwnerMove && remainingSteps==0){
+            stopMove();
+            try{
+                phase_actual.toEndTurnPhase();
+                try_endTurn();
+            } catch (InvalidPhaseTransition invalidPhaseTransition) {
+                invalidPhaseTransition.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Method to decide move to Up.
+     */
+    public void tryToMoveUp(){
+        try {
+            phase_actual.moveUp();
+        } catch (InvalidActionException | IncorrectDirectionException | InvalidPhaseTransition e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method to decide move to Down.
+     */
+    public void tryToMoveDown(){
+        try {
+            phase_actual.moveDown();
+        } catch (InvalidActionException | IncorrectDirectionException | InvalidPhaseTransition e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method to decide move to Left.
+     */
+    public void tryToMoveLeft(){
+        try {
+            phase_actual.moveLeft();
+        } catch (InvalidActionException | IncorrectDirectionException | InvalidPhaseTransition e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method to decide move to Right.
+     */
+    public void tryToMoveRight(){
+        try {
+            phase_actual.moveRight();
+        } catch (InvalidActionException | IncorrectDirectionException | InvalidPhaseTransition e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void moveToDirection(IPanel panel) throws InvalidPhaseTransition {
+        phase_actual.toMovingPhase();
+        if(remainingSteps>0){
+            remainingSteps--;
+            setPlayerPanel(ownerTurn, panel);
+        }
+        if(canOwnerMove){
+            keepMoving();
+        }
+    }
+
+    /**
+     * method to move to some direction after to choose the path.
+     */
+    public void moveUp() throws IncorrectDirectionException, InvalidPhaseTransition {
+        IPanel up = ownerTurn.getActualPanel().getUp();
+        if(up!=null){
+            moveToDirection(up);
+        }else {
+            throw new IncorrectDirectionException("Choose another direction to Move");
+        }
+    }
+
+    /**
+     * method to move to some direction after to choose the path.
+     */
+    public void moveDown() throws IncorrectDirectionException, InvalidPhaseTransition {
+        IPanel down = ownerTurn.getActualPanel().getDown();
+        if(down!=null){
+            moveToDirection(down);
+        }else {
+            throw new IncorrectDirectionException("Choose another direction to Move");
+        }
+    }
+
+    /**
+     * method to move to some direction after to choose the path.
+     */
+    public void moveLeft() throws IncorrectDirectionException, InvalidPhaseTransition {
+        IPanel left = ownerTurn.getActualPanel().getLeft();
+        if(left!=null){
+            moveToDirection(left);
+        }else {
+            throw new IncorrectDirectionException("Choose another direction to Move");
+        }
+    }
+
+    /**
+     * method to move to some direction after to choose the path.
+     */
+    public void moveRight() throws IncorrectDirectionException, InvalidPhaseTransition {
+        IPanel right = ownerTurn.getActualPanel().getRight();
+        if(right!=null){
+            moveToDirection(right);
+        }else {
+            throw new IncorrectDirectionException("Choose another direction to Move");
+        }
+    }
+
+    /**
+     * Method to execute the action of stay at player's home panel if the phase allowed it.
+     */
+    public void tryToStayAtHome(){
+        try{
+            phase_actual.stayAtHome();
+        } catch (InvalidActionException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Method to do the action of stay at player's home panel.
+     */
+    public void stayAtHome() {
+        remainingSteps=0;
+        try_endTurn();
+    }
+
+    /**
+     * Method to execute the action of start a battle if the phase allowed it.
+     */
+    public void tryToFight(){
+        try {
+            phase_actual.toFightPhase();
+            phase_actual.fight();
+        } catch (InvalidPhaseTransition | InvalidActionException invalidPhaseTransition) {
+            invalidPhaseTransition.printStackTrace();
+        }
     }
 
     /**
@@ -393,7 +594,7 @@ public class GameController {
     public void try_recover(){
         try {
             phase_actual.recover();
-        } catch (InvalidActionException e) {
+        } catch (InvalidActionException | InvalidPhaseTransition e) {
             e.printStackTrace();
         }
     }
@@ -410,16 +611,115 @@ public class GameController {
     }
 
 
-    public void recover() {
+    /**
+     * Method to execute the action of recovering if the phase allowed it
+     */
+    public void recover() throws InvalidPhaseTransition {
         int dice = getOwnerTurn().roll();
         if(dice<(7-chapter)){
+            phase_actual.toEndTurnPhase();
             try_endTurn();
         } else {
-            try {
-                phase_actual.toStartPhase();
-            } catch (InvalidPhaseTransition invalidPhaseTransition) {
-                invalidPhaseTransition.printStackTrace();
-            }
+            ownerTurn.setCurrentHp(ownerTurn.getMaxHp());
+            phase_actual.toStartPhase();
         }
     }
+
+    /**
+     * Method to end Turn if the phase allowed it
+     */
+    public void try_endTurn(){
+        try {
+            phase_actual.finishTurn();
+            phase_actual.toStartPhase();
+        } catch (InvalidActionException | InvalidPhaseTransition e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Start the fight
+     */
+    public void startFight() {
+        attacker = ownerTurn;
+        victim = ownerTurn.getActualPanel().getPlayers().get(0);
+    }
+
+    /**
+     * Evade if the actual phase allowed it
+     */
+    public void tryToEvade(){
+        try{
+            phase_actual.evade();
+        } catch (InvalidActionException | InvalidPhaseTransition e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Defense if the actual phase allowed it
+     */
+    public void tryToDefense(){
+        try{
+            phase_actual.defense();
+        } catch (InvalidActionException | InvalidPhaseTransition e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Do the action of evade
+     * @throws InvalidPhaseTransition if the phase doesn´t allow it
+     * @throws InvalidActionException if the phase doesn´t allow it
+     */
+    public void evade() throws InvalidPhaseTransition, InvalidActionException {
+        victim.evade(attacker.rollAttack());
+        afterAttack();
+    }
+
+    /**
+     * Do the action of defense
+     * @throws InvalidPhaseTransition if the phase doesn´t allow it
+     * @throws InvalidActionException if the phase doesn´t allow it
+     */
+    public void defense() throws InvalidPhaseTransition, InvalidActionException {
+        victim.defend(attacker.rollAttack());
+        afterAttack();
+    }
+
+    private void afterAttack() throws InvalidPhaseTransition, InvalidActionException {
+        if(victim.isKO()){
+            attacker.winAgainst(victim);
+            victim = null;
+            phase_actual.toEndTurnPhase();
+            phase_actual.finishTurn();
+        }
+        else if(!victim.equals(ownerTurn)){
+            attacker = victim;
+            victim = ownerTurn;
+        } else {
+            victim = null;
+            attacker = null;
+            phase_actual.toEndTurnPhase();
+            phase_actual.finishTurn();
+        }
+    }
+
+    /**
+     * Give stars at the start of the turn according to the player's norma goal.
+     */
+    public void starsAtStart(){
+        ownerTurn.getNormaGoal().reciveStarsAtStart((int) Math.floor(getChapter()*0.5) + 1, ownerTurn);
+    }
+
+
+    /**
+     * Starts the game
+     */
+    public void StartGame(){
+        resetOwnerTurn();
+        setPhase(new StartPhase());
+    }
+
+
 }

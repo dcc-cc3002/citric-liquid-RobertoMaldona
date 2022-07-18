@@ -89,7 +89,7 @@ public abstract class AbstractUnit implements IUnit {
     /**
      * Reduces this unit's star count by a given amount.
      *
-     * <p>The star count will must always be greater or equal to 0
+     * The star count will must always be greater or equal to 0
      */
     public void reduceStarsBy(final int amount) {
         stars = Math.max(0, stars - amount);
@@ -155,4 +155,71 @@ public abstract class AbstractUnit implements IUnit {
     }
 
     public abstract IUnit copy();
+
+    /**
+     * calculate the attack
+     * @return rollAttack + unit's attack
+     */
+    public int rollAttack(){
+        return (roll()+atk);
+    }
+
+    /**
+     * do the action of "evade" an attack.
+     * @param enemyAttack the amount of the enemy's attack
+     */
+    public void evade(int enemyAttack){
+        int evade = roll()+evd;
+        if(evade<=enemyAttack){
+            setCurrentHp(currentHp-enemyAttack);
+        }
+    }
+
+    /**
+     * do the action of "defense" an attack
+     * @param enemyAttack the amount of the enemy's attack
+     */
+    public void defend(int enemyAttack){
+        int defense = roll()+def;
+        int amountATK = Math.max(1, enemyAttack-defense);
+        setCurrentHp(currentHp-amountATK);
+    }
+
+    /**
+     * When a Unit wins to another unit, ejecute the method defeatedBy[Unit] according to the specific unit that wins.
+     * @param defeatedUnit the defeated unit.
+     */
+    public abstract void winAgainst(IUnit defeatedUnit);
+
+    /**
+     * gives half of the stars to the player who has defeated him, and increase the victories
+     * @param winPlayer
+     */
+    public void defeatedByPlayer(Player winPlayer){
+        int starsToPlayer = getStars();
+        reduceStarsBy(starsToPlayer);
+        winPlayer.increaseStarsBy(starsToPlayer);
+    }
+
+    @Override
+    public void defeatedByWildUnit(WildUnit wildUnit) {
+    }
+
+    @Override
+    public void defeatedByBoss(BossUnit bossUnit) {
+    }
+
+    /**
+     * Increases the parameter victories of the winPlayer according to specific unit that is defeated.
+     * @param winPlayer the Player that increases his victories
+     */
+    @Override
+    public abstract void increaseVictoriesToPlayer(Player winPlayer);
+
+    /**
+     * @return true if the unit is KO, false if not.
+     */
+    public boolean isKO(){
+        return getCurrentHp() == 0;
+    }
 }

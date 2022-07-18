@@ -114,25 +114,33 @@ public abstract class AbstractPanel implements IPanel{
      * Setea el Ipanel left con un nuevo Ipanel
      */
     public void setLeft(IPanel left) {
-        this.left = left;
+        if(getNextPanels().contains(left)){
+            this.left = left;
+        }
     }
     /**
      * Setea el Ipanel left con un nuevo Ipanel
      */
     public void setRight(IPanel right) {
-        this.right = right;
+        if(getNextPanels().contains(right)){
+            this.right = right;
+        }
     }
     /**
      * Setea el Ipanel left con un nuevo Ipanel
      */
     public void setUp(IPanel up) {
-        this.up = up;
+        if(getNextPanels().contains(up)){
+            this.up = up;
+        }
     }
     /**
      * Setea el Ipanel left con un nuevo Ipanel
      */
     public void setDown(IPanel down) {
-        this.down = down;
+        if(getNextPanels().contains(down)){
+            this.down = down;
+        }
     }
 
     /**

@@ -18,4 +18,14 @@ public class WildUnit extends AbstractUnit{
     public WildUnit copy() {
         return new WildUnit(getName(), getMaxHp(), getAtk(), getDef(), getEvd());
     }
+
+    @Override
+    public void winAgainst(IUnit defeatedUnit){
+        defeatedUnit.defeatedByWildUnit(this);
+    }
+
+    @Override
+    public void increaseVictoriesToPlayer(Player winPlayer) {
+        winPlayer.increaseVictoriesBy(1);
+    }
 }

@@ -1,6 +1,7 @@
 package cl.uchile.dcc.citricliquid.gameflow.phases;
 
 import cl.uchile.dcc.citricliquid.gameflow.GameController;
+import cl.uchile.dcc.citricliquid.gameflow.IncorrectDirectionException;
 import cl.uchile.dcc.citricliquid.gameflow.InvalidActionException;
 import cl.uchile.dcc.citricliquid.gameflow.InvalidPhaseTransition;
 
@@ -26,7 +27,7 @@ public class Phase {
      * method that execute the method when the player is KO in the gameController
      * @throws InvalidActionException if the phase actual have not permited throw this method
      */
-    public void recover() throws InvalidActionException{
+    public void recover() throws InvalidActionException, InvalidPhaseTransition {
         throw new InvalidActionException("You can´t recover in this phase");
     }
 
@@ -54,6 +55,14 @@ public class Phase {
         throw new InvalidActionException("You can´t choose between keep moving oo stay in current panel");
     }
 
+    /**
+     * method to stay at owner's home in the gameController
+     * @throws InvalidActionException if the phase actual have not permitted throw this method
+     */
+    public void stayAtHome() throws InvalidActionException {
+        throw new InvalidActionException("You can´t choose stay at home in current panel");
+    }
+
     public void waitHome() throws InvalidActionException{
         throw new InvalidActionException("You can´t stay in home in this moment");
     }
@@ -76,6 +85,37 @@ public class Phase {
      */
     public void finishTurn() throws InvalidActionException{
         throw new InvalidActionException("You can´t finish turn in this moment");
+    }
+
+    /**
+     * method that evade in the gameController
+     * @throws InvalidActionException if the phase actual have not permited throw this method
+     */
+    public void evade() throws InvalidActionException, InvalidPhaseTransition {
+        throw new InvalidActionException("You can´t evade in this moment");
+    }
+    /**
+     * method that defense in the gameController
+     * @throws InvalidActionException if the phase actual have not permited throw this method
+     */
+    public void defense() throws InvalidActionException, InvalidPhaseTransition {
+        throw new InvalidActionException("You can´t evade in this moment");
+    }
+
+    /**
+     * method that attack in the gameController
+     * @throws InvalidActionException if the phase actual have not permited throw this method
+     */
+    public void attack() throws InvalidActionException {
+        throw new InvalidActionException("You can´t attack in this moment");
+    }
+
+    /**
+     * method to fight in the gameController
+     * @throws InvalidActionException if the phase actual have not permitted throw this method
+     */
+    public void fight() throws InvalidActionException {
+        throw new InvalidActionException("You can´t fight in this moment");
     }
 
     /**
@@ -162,5 +202,34 @@ public class Phase {
      */
     public void toEndTurnPhase() throws InvalidPhaseTransition{
         throw new InvalidPhaseTransition("You can´t move to EndTurnPhase Phase in this phase");
+    }
+
+    /**
+     * method to choose move to up in the gameController
+     * @throws InvalidActionException if the phase actual have not permitted throw this method
+     */
+    public void moveUp() throws InvalidActionException, IncorrectDirectionException, InvalidPhaseTransition {
+        throw new InvalidActionException("You can´t choose move to up in this moment");
+    }
+    /**
+     * method to choose move to down in the gameController
+     * @throws InvalidActionException if the phase actual have not permitted throw this method
+     */
+    public void moveDown() throws InvalidActionException, IncorrectDirectionException, InvalidPhaseTransition {
+        throw new InvalidActionException("You can´t choose move to down in this moment");
+    }
+    /**
+     * method to choose move to left in the gameController
+     * @throws InvalidActionException if the phase actual have not permitted throw this method
+     */
+    public void moveLeft() throws InvalidActionException, IncorrectDirectionException, InvalidPhaseTransition {
+        throw new InvalidActionException("You can´t choose move to left in this moment");
+    }
+    /**
+     * method to choose move to right in the gameController
+     * @throws InvalidActionException if the phase actual have not permitted throw this method
+     */
+    public void moveRight() throws InvalidActionException, IncorrectDirectionException, InvalidPhaseTransition {
+        throw new InvalidActionException("You can´t choose move to right in this moment");
     }
 }
