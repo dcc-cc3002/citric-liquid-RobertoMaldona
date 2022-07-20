@@ -108,6 +108,11 @@ class PanelTest {
     final var expectedUpPanel = new NeutralPanel(102);
     final var expectedRightPanel = new NeutralPanel(103);
 
+    testNeutralPanel.addNextPanel(expectedDownPanel);
+    testNeutralPanel.addNextPanel(expectedLeftPanel);
+    testNeutralPanel.addNextPanel(expectedUpPanel);
+    testNeutralPanel.addNextPanel(expectedRightPanel);
+
     testNeutralPanel.setDown(expectedDownPanel);
     assertEquals(expectedDownPanel, testNeutralPanel.getDown());
 
@@ -138,27 +143,38 @@ class PanelTest {
     testNeutralPanel.addNextPanel(testHomePanel);
     assertTrue(testNeutralPanel.equals(neutralPanelCopy));
     //-----/
+
+    neutralPanelCopy.addNextPanel(testHomePanel);
     neutralPanelCopy.setDown(testHomePanel);
     assertFalse(testNeutralPanel.equals(neutralPanelCopy));
 
     testNeutralPanel.setDown(testHomePanel);
     assertTrue(testNeutralPanel.equals(neutralPanelCopy));
     //-----/
+
+    neutralPanelCopy.addNextPanel(testBossPanel);
     neutralPanelCopy.setLeft(testBossPanel);
     assertFalse(testNeutralPanel.equals(neutralPanelCopy));
 
+    testNeutralPanel.addNextPanel(testBossPanel);
     testNeutralPanel.setLeft(testBossPanel);
     assertTrue(testNeutralPanel.equals(neutralPanelCopy));
     //-----/
+
+    neutralPanelCopy.addNextPanel(testEncounterPanel);
     neutralPanelCopy.setUp(testEncounterPanel);
     assertFalse(testNeutralPanel.equals(neutralPanelCopy));
 
+    testNeutralPanel.addNextPanel(testEncounterPanel);
     testNeutralPanel.setUp(testEncounterPanel);
     assertTrue(testNeutralPanel.equals(neutralPanelCopy));
     //-----/
+
+    neutralPanelCopy.addNextPanel(testDropPanel);
     neutralPanelCopy.setRight(testDropPanel);
     assertFalse(testNeutralPanel.equals(neutralPanelCopy));
 
+    testNeutralPanel.addNextPanel(testDropPanel);
     testNeutralPanel.setRight(testDropPanel);
     assertTrue(testNeutralPanel.equals(neutralPanelCopy));
     //----------/

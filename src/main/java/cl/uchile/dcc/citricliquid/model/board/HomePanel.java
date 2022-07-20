@@ -21,5 +21,6 @@ public class HomePanel extends AbstractPanel{
     @Override
     public void activatedBy(Player player) {
         player.setCurrentHp(player.getCurrentHp() + 1);
+        player.normaCheck();
     }
 }

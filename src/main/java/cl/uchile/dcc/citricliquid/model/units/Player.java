@@ -1,8 +1,11 @@
 package cl.uchile.dcc.citricliquid.model.units;
 
-import cl.uchile.dcc.citricliquid.model.board.HomePanel;
 import cl.uchile.dcc.citricliquid.model.board.IPanel;
 import cl.uchile.dcc.citricliquid.model.norma.INormaGoal;
+import cl.uchile.dcc.citricliquid.model.norma.StarNorma;
+
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 
 /**
  * This class represents a player in the game 99.7% Citric Liquid.
@@ -14,10 +17,15 @@ import cl.uchile.dcc.citricliquid.model.norma.INormaGoal;
  */
 public class Player extends AbstractUnit {
   private int normaLevel;
-  private INormaGoal normaGoal = null;
+  private INormaGoal normaGoal;
   private int victories;
-  private HomePanel home = null;
+  private IPanel home = null;
   private IPanel actualPanel = null;
+
+  private final PropertyChangeSupport normaCheckNotification= new PropertyChangeSupport(this);
+  private final PropertyChangeSupport atHomeNotification= new PropertyChangeSupport(this);
+  private final PropertyChangeSupport moreThanOnePlayer= new PropertyChangeSupport(this);
+  private final PropertyChangeSupport pathToChooseNotification= new PropertyChangeSupport(this);
 
   /**
    * Creates a new player.
@@ -38,7 +46,7 @@ public class Player extends AbstractUnit {
     super(name, hp, atk, def, evd);
     normaLevel = 1;
     victories = 0;
-
+    normaGoal = new StarNorma();
   }
 
   /**
@@ -50,10 +58,24 @@ public class Player extends AbstractUnit {
 
   /**
    * Set the panel Actual
-   * @param actualPanel
+   * @param newActualPanel
    */
-  public void setActualPanel(IPanel actualPanel) {
-    this.actualPanel = actualPanel;
+  public void setActualPanel(IPanel newActualPanel) {
+    actualPanel = newActualPanel;
+
+    if(this.getHomePanel().getId()==actualPanel.getId()) {
+      atHomeNotification.firePropertyChange("Estoy en mi HomePanel", false,true);
+    }
+
+    else if(actualPanel.getPlayers().size()>1) {
+      moreThanOnePlayer.firePropertyChange("Más de un jugador en el panel actual",
+              false,true);
+    }
+
+    else if(actualPanel.getNextPanels().size()>1) {
+      pathToChooseNotification.firePropertyChange("Tengo que elegir un camino",
+              false,true);
+    }
   }
 
   /**
@@ -66,7 +88,7 @@ public class Player extends AbstractUnit {
   /**
    * @return the player's home panel
    */
-  public HomePanel getHomePanel() {
+  public IPanel getHomePanel() {
     return home;
   }
 
@@ -74,7 +96,7 @@ public class Player extends AbstractUnit {
    * Set the panel that will be the player's home
    * @param home
    */
-  public void setHomePanel(HomePanel home) {
+  public void setHomePanel(IPanel home) {
     this.home = home;
   }
 
@@ -97,6 +119,7 @@ public class Player extends AbstractUnit {
    */
   public void normaClear() {
     normaLevel++;
+    normaCheckNotification.firePropertyChange("Aumento de Norma", normaLevel-1, normaLevel);
   }
 
   /**
@@ -112,6 +135,13 @@ public class Player extends AbstractUnit {
    */
   public int getVictories() {
     return victories;
+  }
+
+  /**
+   * Increases the Player's Field victories
+   */
+  public void increaseVictoriesBy(int amount){
+    setVictories(victories+amount);
   }
 
   /**
@@ -149,5 +179,69 @@ public class Player extends AbstractUnit {
   @Override
   public Player copy() {
     return new Player(getName(), getMaxHp(), getAtk(), getDef(), getEvd());
+  }
+
+  /**
+   * Method that adds a listener in normaCheckNotification
+   * @param Listener new Listener
+   */
+  public void addNormaLevelHandler(PropertyChangeListener Listener){
+    normaCheckNotification.addPropertyChangeListener(Listener);
+  }
+
+  /**
+   * Method that adds a listener in atHomeNotification
+   * @param Listener new Listener
+   */
+  public void addAtHomePanelHandler(PropertyChangeListener Listener){
+    atHomeNotification.addPropertyChangeListener(Listener);
+  }
+
+  /**
+   * Method that adds a listener in moreThanOnePlayer
+   * @param Listener new Listener
+   */
+  public void addMoreThanOnePlayerHandler(PropertyChangeListener Listener){
+    moreThanOnePlayer.addPropertyChangeListener(Listener);
+  }
+
+  /**
+   * Method that adds a listener in pathToChooseNotification
+   * @param Listener new Listener
+   */
+  public void addMoreTanOnePathHandler(PropertyChangeListener Listener){
+    pathToChooseNotification.addPropertyChangeListener(Listener);
+  }
+
+  @Override
+  public void winAgainst(IUnit defeatedUnit){
+    defeatedUnit.defeatedByPlayer(this);
+    defeatedUnit.increaseVictoriesToPlayer(this);
+  }
+
+  @Override
+  public void increaseVictoriesToPlayer(Player winPlayer){
+    winPlayer.increaseVictoriesBy(2);
+  }
+
+  @Override
+  public void defeatedByPlayer(Player winPlayer){
+    int starsToPlayer = ((int) Math.floor(getStars()*0.5));
+    reduceStarsBy(starsToPlayer);
+    winPlayer.increaseStarsBy(starsToPlayer);
+  }
+
+  @Override
+  public void defeatedByBoss(BossUnit bossUnit) {
+    int starsToBoss = ((int) Math.floor(getStars()*0.5));
+    reduceStarsBy(starsToBoss);
+    bossUnit.increaseStarsBy(starsToBoss);
+  }
+
+  @Override
+  public void defeatedByWildUnit(WildUnit wildUnit) {
+    int starsToWildUnit = ((int) Math.floor(getStars()*0.5));
+    reduceStarsBy(starsToWildUnit);
+    wildUnit.increaseStarsBy(starsToWildUnit);
   }
 }

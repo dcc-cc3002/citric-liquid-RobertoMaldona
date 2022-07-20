@@ -18,4 +18,14 @@ public class BossUnit extends AbstractUnit{
     public BossUnit copy() {
         return new BossUnit(getName(), getMaxHp(), getAtk(), getDef(), getEvd());
     }
+
+    @Override
+    public void winAgainst(IUnit defeatedUnit){
+        defeatedUnit.defeatedByBoss(this);
+    }
+
+    @Override
+    public void increaseVictoriesToPlayer(Player winPlayer) {
+        winPlayer.increaseVictoriesBy(3);
+    }
 }

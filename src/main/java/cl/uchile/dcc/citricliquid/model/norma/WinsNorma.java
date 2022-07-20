@@ -13,4 +13,8 @@ public class WinsNorma implements INormaGoal{
             player.normaClear();
         }
     }
+    @Override
+    public void reciveStarsAtStart(int stars, Player ownerTurn) {
+        //Nothing
+    }
 }

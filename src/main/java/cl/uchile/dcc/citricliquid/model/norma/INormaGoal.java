@@ -9,4 +9,6 @@ public interface INormaGoal {
      * @param player
      */
     void checkMe(Player player);
+
+    void reciveStarsAtStart(int stars, Player ownerTurn);
 }

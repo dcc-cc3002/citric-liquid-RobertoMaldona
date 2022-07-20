@@ -22,4 +22,21 @@ public interface IUnit {
 
     void reduceStarsBy(final int amount);
 
+    int rollAttack();
+
+    void defend(int enemyAttack);
+
+    void evade(int enemyAttack);
+    
+    void winAgainst(IUnit defeatedUnit);
+    
+    void defeatedByPlayer(Player player);
+
+    void defeatedByWildUnit(WildUnit wildUnit);
+
+    void defeatedByBoss(BossUnit bossUnit);
+
+    void increaseVictoriesToPlayer(Player winPlayer);
+
+    boolean isKO();
 }
