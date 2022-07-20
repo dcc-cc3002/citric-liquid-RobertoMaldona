@@ -7,10 +7,6 @@ import cl.uchile.dcc.citricliquid.gameflow.phases.Phase;
 
 public class FightPhase extends Phase {
 
-    @Override
-    public void attack(){
-
-    }
 
     @Override
     public void evade() throws InvalidPhaseTransition, InvalidActionException {

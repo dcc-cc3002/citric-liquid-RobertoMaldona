@@ -1,14 +1,16 @@
 package cl.uchile.dcc.citricliquid.gameflow.phases;
 
+import cl.uchile.dcc.citricliquid.gameflow.InvalidPhaseTransition;
+
 public class MovingPhase extends Phase {
 
     @Override
-    public void move(){
+    public void move() throws InvalidPhaseTransition {
         gameController.moveStart();
     }
 
     @Override
-    public void keepMoving(){
+    public void keepMoving() throws InvalidPhaseTransition {
         gameController.keepMoving();
     }
 

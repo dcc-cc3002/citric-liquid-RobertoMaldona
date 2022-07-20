@@ -141,5 +141,28 @@ public class AbstractUnitTest {
                           roll + "is not in [1, 6]" + System.lineSeparator()
                           + "Test failed with random seed: " + testSeed);
   }
-  // endregion
+
+  @Test
+  public void defeatedTest(){
+    wolf.increaseStarsBy(10); //Wild unit
+    shrek.increaseStarsBy(10); //Boss
+
+    suguri.winAgainst(wolf);
+    assertEquals(10, suguri.getStars());
+    assertEquals(1,suguri.getVictories());
+
+    suguri.winAgainst(shrek);
+    assertEquals(20, suguri.getStars());
+    assertEquals(4,suguri.getVictories());
+
+    shrek.winAgainst(suguri);
+    assertEquals(10, suguri.getStars());
+    assertEquals(10, shrek.getStars());
+
+    wolf.winAgainst(suguri);
+    assertEquals(5, suguri.getStars());
+    assertEquals(5, wolf.getStars());
+
+  }
+
 }

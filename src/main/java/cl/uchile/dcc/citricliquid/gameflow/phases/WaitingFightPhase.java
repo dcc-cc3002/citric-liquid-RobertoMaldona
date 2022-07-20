@@ -6,10 +6,6 @@ import cl.uchile.dcc.citricliquid.gameflow.phases.Phase;
 
 public class WaitingFightPhase extends Phase {
 
-    @Override
-    public void waitToFight() {
-
-    }
 
     @Override
     public void toFightPhase() {

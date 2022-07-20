@@ -1,6 +1,7 @@
 package cl.uchile.dcc.citricliquid.model.gameflow;
 
 import cl.uchile.dcc.citricliquid.gameflow.GameController;
+import cl.uchile.dcc.citricliquid.gameflow.InvalidPhaseTransition;
 import cl.uchile.dcc.citricliquid.gameflow.phases.MovingPhase;
 import cl.uchile.dcc.citricliquid.gameflow.phases.WaitForHomePhase;
 import cl.uchile.dcc.citricliquid.model.board.*;
@@ -252,7 +253,7 @@ public class GameControllerTest {
     }
 
     @RepeatedTest(25)
-    public void stopMovingAtHomeTest() {
+    public void stopMovingAtHomeTest() throws InvalidPhaseTransition {
         /*
         Configuraciones iniciales, aderimos un neutralPanel y a este le añadimos el HomePanel de SuguriController como siguiente.
         Luego, a este último le añadimos otro panel como siguiente.
@@ -279,7 +280,7 @@ public class GameControllerTest {
     }
 
     @RepeatedTest(25)
-    public void stopMovingForMeetPlayersTest() {
+    public void stopMovingForMeetPlayersTest() throws InvalidPhaseTransition {
         /*
         Configuraciones iniciales, aderimos un neutralPanel y a este le añadimos el HomePanel de otro jugador como siguiente.
         Luego, a este último le añadimos otro panel cualquiera como siguiente.
@@ -313,7 +314,7 @@ public class GameControllerTest {
     }
 
     @RepeatedTest(25)
-    public void stopMovingForChoosePathTest() {
+    public void stopMovingForChoosePathTest() throws InvalidPhaseTransition {
         /*
         Configuraciones iniciales, aderimos un neutralPanel y a este le añadimos un panel con más de un panel como siguiente.
          */

@@ -1,15 +1,10 @@
 package cl.uchile.dcc.citricliquid.gameflow.phases;
 
-import cl.uchile.dcc.citricliquid.gameflow.InvalidPhaseTransition;
-import cl.uchile.dcc.citricliquid.gameflow.phases.ChooseCardPhase;
-import cl.uchile.dcc.citricliquid.gameflow.phases.Phase;
-import cl.uchile.dcc.citricliquid.gameflow.phases.RecoveryPhase;
-
 public class StartPhase extends Phase {
 
     @Override
     public void start() {
-        if(gameController.getOwnerTurn().isK_O()){
+        if(gameController.getOwnerTurn().isKO()){
             toRecoveryPhase();
             gameController.try_recover();
         } else {
@@ -17,11 +12,6 @@ public class StartPhase extends Phase {
             toMovingPhase();
             gameController.try_startMove();
         }
-    }
-
-    @Override
-    public void toChooseCardPhase() {
-        changePhase(new ChooseCardPhase());
     }
 
     @Override

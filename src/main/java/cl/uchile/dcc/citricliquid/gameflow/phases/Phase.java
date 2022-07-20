@@ -32,18 +32,10 @@ public class Phase {
     }
 
     /**
-     * method that execute the method to choose a card to play in the gameController
-     * @throws InvalidActionException if the phase actual have not permited throw this method
-     */
-    public void chooseCardToPlay() throws InvalidActionException{
-        throw new InvalidActionException("You can´t choose to play a card in this phase");
-    }
-
-    /**
      * method that execute the method to move the owner turn's player in the gameController
      * @throws InvalidActionException if the phase actual have not permited throw this method
      */
-    public void move() throws InvalidActionException{
+    public void move() throws InvalidActionException, InvalidPhaseTransition {
         throw new InvalidActionException("you can´t move in this phase");
     }
 
@@ -51,7 +43,7 @@ public class Phase {
      * method that keep moving the owner turn's player in the gameController
      * @throws InvalidActionException if the phase actual have not permited throw this method
      */
-    public void keepMoving() throws InvalidActionException{
+    public void keepMoving() throws InvalidActionException, InvalidPhaseTransition {
         throw new InvalidActionException("You can´t choose between keep moving oo stay in current panel");
     }
 
@@ -61,22 +53,6 @@ public class Phase {
      */
     public void stayAtHome() throws InvalidActionException {
         throw new InvalidActionException("You can´t choose stay at home in current panel");
-    }
-
-    public void waitHome() throws InvalidActionException{
-        throw new InvalidActionException("You can´t stay in home in this moment");
-    }
-
-    public void waitToFight() throws InvalidActionException{
-        throw new InvalidActionException("You can´t Fight with other Unit in this moment");
-    }
-
-    /**
-     * method that finish the turn in the gameController
-     * @throws InvalidActionException if the phase actual have not permited throw this method
-     */
-    public void waitToChosePath() throws InvalidActionException{
-        throw new InvalidActionException("You cant choose the path to continue the moving in this phase");
     }
 
     /**
@@ -99,15 +75,7 @@ public class Phase {
      * @throws InvalidActionException if the phase actual have not permited throw this method
      */
     public void defense() throws InvalidActionException, InvalidPhaseTransition {
-        throw new InvalidActionException("You can´t evade in this moment");
-    }
-
-    /**
-     * method that attack in the gameController
-     * @throws InvalidActionException if the phase actual have not permited throw this method
-     */
-    public void attack() throws InvalidActionException {
-        throw new InvalidActionException("You can´t attack in this moment");
+        throw new InvalidActionException("You can´t defended in this moment");
     }
 
     /**
@@ -123,12 +91,6 @@ public class Phase {
      */
     protected void canMoving(){
         gameController.setCanOwnerMove(true);
-    }
-    /**
-     * method to set false to field "canOwnerMove" of gameController
-     */
-    protected void stopMoving() {
-        gameController.stopMove();
     }
 
     /**
@@ -154,13 +116,7 @@ public class Phase {
     public void toRecoveryPhase() throws InvalidPhaseTransition {
         throw new InvalidPhaseTransition("You can´t move to Recovery Phase in this phase");
     }
-    /**
-     * Method to set the next phase to ChooseCardPhase
-     * @throws InvalidPhaseTransition if the phase actual can't change to ChooseCardPhase
-     */
-    public void toChooseCardPhase() throws InvalidPhaseTransition{
-        throw new InvalidPhaseTransition("You can´t move to ChooseCard Phase in this phase");
-    }
+
     /**
      * Method to set the next phase to MovingPhase
      * @throws InvalidPhaseTransition if the phase actual can't change to MovingPhase

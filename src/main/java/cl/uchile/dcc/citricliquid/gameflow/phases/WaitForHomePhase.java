@@ -7,10 +7,6 @@ import cl.uchile.dcc.citricliquid.gameflow.phases.Phase;
 public class WaitForHomePhase extends Phase {
 
     @Override
-    public void waitHome() {
-
-    }
-    @Override
     public void stayAtHome(){
         toEndTurnPhase();
         gameController.stayAtHome();

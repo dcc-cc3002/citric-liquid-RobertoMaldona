@@ -393,7 +393,7 @@ public class GameController {
     /**
      * The owner turn move at the start of his turn
      */
-    public void moveStart() {
+    public void moveStart() throws InvalidPhaseTransition {
         ownerTurn.addAtHomePanelHandler(homePanelHandler);
         ownerTurn.addMoreThanOnePlayerHandler(fightHandler);
         ownerTurn.addMoreTanOnePathHandler(choosePathHandler);
@@ -417,7 +417,7 @@ public class GameController {
     /**
      * Execute the action of keep moving.
      */
-    public void keepMoving(){
+    public void keepMoving() throws InvalidPhaseTransition {
         setCanOwnerMove(true);
         while (remainingSteps>0 && canOwnerMove){
             IPanel nextPanel= getNextPanels(ownerTurn.getActualPanel()).iterator().next();
@@ -426,12 +426,8 @@ public class GameController {
         }
         if(canOwnerMove && remainingSteps==0){
             stopMove();
-            try{
-                phase_actual.toEndTurnPhase();
-                try_endTurn();
-            } catch (InvalidPhaseTransition invalidPhaseTransition) {
-                invalidPhaseTransition.printStackTrace();
-            }
+            phase_actual.toEndTurnPhase();
+            try_endTurn();
         }
     }
 
@@ -605,7 +601,7 @@ public class GameController {
     public void try_startMove(){
         try {
             phase_actual.move();
-        } catch (InvalidActionException e) {
+        } catch (InvalidActionException | InvalidPhaseTransition e) {
             e.printStackTrace();
         }
     }
@@ -692,7 +688,7 @@ public class GameController {
             attacker.winAgainst(victim);
             victim = null;
             phase_actual.toEndTurnPhase();
-            phase_actual.finishTurn();
+            try_endTurn();
         }
         else if(!victim.equals(ownerTurn)){
             attacker = victim;
@@ -701,7 +697,7 @@ public class GameController {
             victim = null;
             attacker = null;
             phase_actual.toEndTurnPhase();
-            phase_actual.finishTurn();
+            try_endTurn();
         }
     }
 

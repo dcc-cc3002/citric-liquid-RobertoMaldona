@@ -7,10 +7,7 @@ import cl.uchile.dcc.citricliquid.gameflow.phases.Phase;
 
 public class WaitingForPathPhase extends Phase {
 
-    @Override
-    public void waitToChosePath() {
 
-    }
     @Override
     public void moveUp() throws IncorrectDirectionException, InvalidPhaseTransition {
         gameController.moveUp();

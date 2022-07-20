@@ -103,18 +103,6 @@ public abstract class AbstractUnit implements IUnit {
     }
 
     /**
-     * method that advice if the Unit is KO
-     */
-    public boolean isK_O(){
-        if(getCurrentHp()==0){
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
-    /**
      * Set's the seed for this player's random number generator.
      *
      * <p>The random number generator is used for taking non-deterministic decisions, this method is
